@@ -1,13 +1,26 @@
-const express = require('express')
+const express = require("express")
 
-const port = 9000
+const userRouter = require('./users/users.router')
+const db = require('./utils/database')
 
-const app = express
+const port = 8000
+const app = express()
+
+app.use(express.json())
+
+db.authenticate()
+    .then(() => console.log('Database correctamente autenticada'))
+    .catch((err) => console.log(err))
+
+db.sync()
+    .then(() => console.log('Database correctamente sincronizada'))
+    .catch((err) => console.log(err))
 
 app.get('/', (req, res) => {
-    res.status(200).json({message: 'Ok!'})
-}) 
+    res.status(200).json({message: 'Todo OK'})
+})
 
-app.listen(() => {
-    console.log(`Server started at port ${port}`)
+app.use('/api/v1', userRouter)
+app.listen(port, () => {
+    console.log(`Server started at port ${port}`);
 })
